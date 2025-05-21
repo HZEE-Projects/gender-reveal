@@ -8,6 +8,12 @@ const app = express();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGOSH_URI, {
   useNewUrlParser: true,
@@ -22,8 +28,18 @@ app.post('/api/guesses', async (req, res) => {
     if (!['male', 'female'].includes(guess)) {
       return res.status(400).json({ error: "Guess must be 'male' or 'female'" });
     }
-    const newGuess = await Guess.create({ name, guess, message });
-    res.status(201).json(newGuess);
+    await Guess.create({ name, guess, message });
+    
+    
+    const guesses = await Guess.find().sort({ createdAt: -1 });
+
+    const male = guesses.filter(g => g.guess === 'male').length;
+    const female = guesses.filter(g => g.guess === 'female').length;
+    console.log({male, female})
+    
+    return res.json({
+      male, female
+    });
   } catch (err) {
     res.status(500).json({ error: 'Failed to save guess' });
   }
@@ -33,7 +49,11 @@ app.post('/api/guesses', async (req, res) => {
 app.get('/api/guesses', async (req, res) => {
   try {
     const guesses = await Guess.find().sort({ createdAt: -1 });
-    res.json(guesses);
+
+    const male = guesses.filter(g => g.guess === 'male').length;
+    const female = guesses.filter(g => g.guess === 'female').length;
+    console.log({male, female})
+    return res.json({ male, female });
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve guesses' });
   }

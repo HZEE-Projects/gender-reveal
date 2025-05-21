@@ -35,8 +35,8 @@ app.get('/api/guesses', async (req, res) => {
     `);
 
     const formattedStats = {
-      boy: 0,
-      girl: 0
+      male: 0,
+      female: 0
     };
 
     stats.forEach(stat => {
@@ -67,8 +67,8 @@ app.post('/api/guesses', async (req, res) => {
     `);
 
     const formattedStats = {
-      boy: 0,
-      girl: 0
+      male: 0,
+      female: 0
     };
 
     stats.forEach(stat => {
