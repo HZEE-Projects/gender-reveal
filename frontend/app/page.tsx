@@ -14,7 +14,7 @@ export default function Home() {
   const [guess, setGuess] = useState("male");
   const [message, setMessage] = useState("");
   const [stats, setStats] = useState({ male: 0, female: 0 });
-  const [messages, setMessages] = useState<{ name?: string; message?: string }[]>([]);
+  const [messages, setMessages] = useState<{ name?: string; message?: string, guess?: string }[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +116,7 @@ export default function Home() {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Leave a message for the parents..."
                   className="mt-1"
+                  required
                 />
               </div>
 
@@ -161,7 +162,11 @@ export default function Home() {
                 <div className="bg-white shadow-md rounded-lg p-4">
                   {messages.map((msg, index) => (
                     <div key={index} className="mb-4 border-b pb-2 last:border-b-0">
-                      <p className="text-gray-800 font-semibold">{msg.name}</p>
+                      <p className="text-gray-800 font-semibold">
+                        <span>
+                          {msg.name}
+                        </span>
+                        {`(${msg.guess})`}</p>
                       <p className="text-gray-600">{msg.message}</p>
                     </div>
                   ))}
