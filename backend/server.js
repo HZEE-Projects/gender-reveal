@@ -35,7 +35,6 @@ app.post('/api/guesses', async (req, res) => {
 
     const male = guesses.filter(g => g.guess === 'male').length;
     const female = guesses.filter(g => g.guess === 'female').length;
-    console.log({male, female})
     
     return res.json({
       male, female
@@ -52,10 +51,23 @@ app.get('/api/guesses', async (req, res) => {
 
     const male = guesses.filter(g => g.guess === 'male').length;
     const female = guesses.filter(g => g.guess === 'female').length;
-    console.log({male, female})
     return res.json({ male, female });
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve guesses' });
+  }
+});
+
+app.get('/api/messages', async (req, res) => {
+  try {
+    const guesses = await Guess.find().sort({ createdAt: -1 });
+    const messages = guesses.filter(g => g.message).map(g => ({
+      name: g.name,
+      guess: g.guess,
+      message: g.message,
+    }));
+    return res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve messages' });
   }
 });
 

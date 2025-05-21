@@ -14,6 +14,7 @@ export default function Home() {
   const [guess, setGuess] = useState("male");
   const [message, setMessage] = useState("");
   const [stats, setStats] = useState({ male: 0, female: 0 });
+  const [messages, setMessages] = useState<{ name?: string; message?: string }[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +46,20 @@ export default function Home() {
     }
   };
 
+  const getMessages = async () => {
+    const response = await fetch("http://localhost:3001/api/messages", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (response.ok) {
+      const messages = await response.json();
+      setMessages(messages);
+    }
+  };
+
   useEffect(() => {
     getData();
+    getMessages();
   }, []);
 
   return (
@@ -131,6 +144,28 @@ export default function Home() {
                   {stats.female}
                 </div>
                 <div className="text-lg text-gray-600">Guessed Girl</div>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6 shadow-xl">
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              Messages
+            </h2>
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="text-lg font-bold text-gray-800 mb-2">
+                  {messages.length} Messages
+                </div>
+                {/* make the message look like a card with best design */}
+                <div className="bg-white shadow-md rounded-lg p-4">
+                  {messages.map((msg, index) => (
+                    <div key={index} className="mb-4 border-b pb-2 last:border-b-0">
+                      <p className="text-gray-800 font-semibold">{msg.name}</p>
+                      <p className="text-gray-600">{msg.message}</p>
+                    </div>
+                  ))}
+              </div>
               </div>
             </div>
           </Card>
